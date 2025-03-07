@@ -1,4 +1,35 @@
-# FullStack-Code-Challenge
+# Disclaimer
+This coding challenge was so much fun. Up until this point in my academic and professional career
+I've never attempted to make an app with a front-end and a back-end. Full disclaimer: Because I'd never worked
+on something like this I relied heavily on ChatGPT to both write code and explain the process.
+I spent a total of 4 hours working on this app. Most of my work was troubleshooting bugs, connecting 
+files, adding comments, and learning.
+
+# Running the Project
+1. Download all the files in the directory.
+2. The app uses the following imports so install those before running the script. Imports: sqlite3, Flask, requests, random
+3. With all the imports set up, you're ready to run the app! Run "runApp.py" to get started.
+4. Open your local port at "http://127.0.0.1:8080" or "http://192.168.86.23:8080"
+5. Select "Start Game" and you're ready to go!
+
+# Known Issues
+1. Doesn't automaticaly take turns
+2. Doesn't change the blank spaces for the other player on change of player number
+3. Game says "Game Over" whether you won or lost.
+4. Let's you try and guess before you've started the game.
+5. Leaderboard doesn't record the second player's number of guesses.
+6. Leaderboard doesn't display player name or number
+7. Could look much nicer and be more dynamic.
+
+# Desirable Next Steps
+1. Make the UI a lot prettier
+2. Fix the leaderboard issues
+3. Add automatic take turns functionality
+4. Make the UI dynamic
+5. Add AI and levels
+6. Resolve known issues in general
+
+# FullStack-Code-Challenge Description
 Code Challenge: Multi-Player Word Guessing Game with Dynamic Word Generation and
 Web Interface
 Objective:
