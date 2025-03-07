@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Guessing Game</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Multi-Player Word Guessing Game</h1>
+
+    <!-- New Game Button -->
+    <button onclick="startNewGame()">Start New Game</button>
+
+    <p id="game_status">Click "Start New Game" to begin!</p>
+
+    <!-- Player Selection -->
+    <label for="playerSelect">Select Player:</label>
+    <select id="playerSelect">
+        <option value="1">Player 1</option>
+        <option value="2">Player 2</option>
+    </select>
+
+    <p id="word_display">Word: _ _ _ _ _</p>
+    <p id="incorrect_guesses">Incorrect guesses: </p>
+
+    <!-- Input for guessing a letter -->
+    <input type="text" id="guessInput" maxlength="1">
+    <button onclick="makeGuess()">Guess</button>
+
+    <!-- Leaderboard -->
+    <h2>Leaderboard</h2>
+    <button onclick="fetchLeaderboard()">View Leaderboard</button>
+    <ul id="leaderboard"></ul>
+
+    <script>
+        let gameId = null;
+
+        // Start a new game
+        async function startNewGame() {
+            let response = await fetch('/new_game', { method: 'POST' });
+            let data = await response.json();
+            gameId = data.game_id;
+
+            document.getElementById("word_display").innerText = "Word: " + "_ ".repeat(data.word_length);
+            document.getElementById("incorrect_guesses").innerText = "Incorrect guesses: ";
+            document.getElementById("game_status").innerText = "Game Started! Select your player and start guessing.";
+        }
+
+        // Player makes a guess
+        async function makeGuess() {
+            if (!gameId) {
+                alert("Start a game first!");
+                return;
+            }
+
+            let letter = document.getElementById("guessInput").value;
+            let player = document.getElementById("playerSelect").value; // Get selected player
+
+            if (!letter || letter.length !== 1 || !letter.match(/[a-zA-Z]/)) {
+                alert("Please enter a single letter!");
+                return;
+            }
+
+            let response = await fetch('/guess', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ game_id: gameId, player: parseInt(player), letter: letter })
+            });
+
+            let data = await response.json();
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            document.getElementById("word_display").innerText = "Word: " + data.word_status.split('').join(' ');
+            document.getElementById("incorrect_guesses").innerText = "Incorrect guesses: " + data.incorrect_guesses.join(", ");
+
+            if (data.game_over) {
+                alert("Game Over! Word was: " + data.word_status);
+                document.getElementById("game_status").innerText = "Game Over! Word was: " + data.word_status;
+                gameId = null;
+            }
+        }
+
+        // Fetch leaderboard
+        async function fetchLeaderboard() {
+            let response = await fetch('/leaderboard', { method: 'GET' });
+            let scores = await response.json();
+            let leaderboardList = document.getElementById("leaderboard");
+            leaderboardList.innerHTML = "";
+
+            scores.forEach(score => {
+                let li = document.createElement("li");
+                li.innerText = `Word: ${score.word} - Incorrect guesses: ${score.incorrect_guesses}`;
+                leaderboardList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
